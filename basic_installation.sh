@@ -102,7 +102,7 @@ if command -v super-track >/dev/null 2>&1; then
 else
     echo "Installing super-track..."
     if ! (
-        sudo snap install super-track
+        sudo snap install super-track && echo -e "[Desktop Entry]\nType=Application\nVersion=1.0\nName=super-track\nComment=super-track startup script\nExec=/snap/bin/super-track\nStartupNotify=false\nTerminal=false" > ~/.config/autostart/super-track.desktop
     ); then
         echo "Failed to install super-track."
         failed_installations+=("super-track")
@@ -113,7 +113,7 @@ fi
 # Install Mattermost
 # ----------------------------------------
 echo "Checking for mattermost-desktop..."
-if command -v mattermost-desktop >/dev/null 2>&1; then
+if command -v /home/rain/Documents/mattermost-desktop-5.6.0-linux-x64/mattermost-desktop >/dev/null 2>&1; then
     echo "mattermost-desktop is already installed. Skipping installation."
 else
     echo "Installing mattermost-desktop..."
@@ -250,8 +250,8 @@ fi
 
 
 echo "Mattermost Desktop version:"
-if command -v mattermost-desktop >/dev/null 2>&1; then
-    mattermost-desktop --version
+if command -v /home/rain/Documents/mattermost-desktop-5.6.0-linux-x64/mattermost-desktop >/dev/null 2>&1; then
+    /home/rain/Documents/mattermost-desktop-5.6.0-linux-x64/mattermost-desktop --version
 else
     echo "mattermost-desktop is not installed."
     failed_installations+=("mattermost-desktop")
