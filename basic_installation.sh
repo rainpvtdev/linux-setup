@@ -9,7 +9,7 @@ if ! sudo apt update && sudo apt upgrade -y; then
 fi
 
 echo "Installing common dependencies..."
-if ! sudo apt install -y wget curl gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common git; then
+if ! sudo apt install -y wget curl gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common git libgconf-2-4 libxss1 libnss3; then
     echo "Failed to install common dependencies."
     failed_installations+=("Common Dependencies")
 fi
@@ -156,10 +156,11 @@ if command -v mongodb-compass >/dev/null 2>&1; then
 else
     echo "Installing MongoDB Compass..."
     if ! (
-        COMPASS_URL=$(wget -qO - https://www.mongodb.com/try/download/compass | grep -oP 'https://downloads.mongodb.com/compass/mongodb-compass_.*?_amd64.deb' | head -1) &&
+        COMPASS_URL=https://downloads.mongodb.com/compass/mongodb-compass_1.44.3_amd64.deb &&
         wget ${COMPASS_URL} &&
-        COMPASS_DEB=${COMPASS_URL##*/} &&
+        COMPASS_DEB=mongodb-compass_1.44.3_amd64.deb &&
         sudo apt install -y ./${COMPASS_DEB} &&
+        apt-get install -f && 
         rm ${COMPASS_DEB}
     ); then
         echo "Failed to install MongoDB Compass."
@@ -200,6 +201,8 @@ else
         failed_installations+=("Meld")
     fi
 fi
+
+sudo apt -y update && sudo apt -y upgrade
 
 # ----------------------------------------
 # Verify installations
