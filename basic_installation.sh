@@ -9,7 +9,7 @@ if ! sudo apt update && sudo apt upgrade -y; then
 fi
 
 echo "Installing common dependencies..."
-if ! sudo apt install -y wget curl gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common git libgconf-2-4 libxss1 libnss3; then
+if ! sudo apt install -y wget curl gnupg gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common git libgconf-2-4 libxss1 libnss3; then
     echo "Failed to install common dependencies."
     failed_installations+=("Common Dependencies")
 fi
@@ -202,6 +202,38 @@ else
     fi
 fi
 
+# ----------------------------------------
+# Install Postman
+# ----------------------------------------
+echo "Checking for Postman..."
+if command -v postman >/dev/null 2>&1; then
+    echo "Postman is already installed. Skipping installation."
+else
+    echo "Installing Postman..."
+    if ! snap install -v postman; then
+        echo "Failed to install Postman."
+        failed_installations+=("Postman")
+    fi
+fi
+
+# ----------------------------------------
+# Install Meld
+# ----------------------------------------
+echo "Checking for Mongodb..."
+if command -v mongod >/dev/null 2>&1; then
+    echo "Mongodb is already installed. Skipping installation."
+else
+    echo "Installing Mongod..."
+    if ! (
+        curl -fsSL https://pgp.mongodb.com/server-7.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor &&
+        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list &&
+        sudo apt -y update && sudo apt install -y mongodb-org && sudo systemctl daemon-reload && sudo systemctl enable mongod && sudo systemctl restart mongod
+    ) then
+        echo "Failed to install mongod."
+        failed_installations+=("Mongodb")
+    fi
+fi
+
 sudo apt -y update && sudo apt -y upgrade
 
 # ----------------------------------------
@@ -290,6 +322,21 @@ if command -v meld >/dev/null 2>&1; then
 else
     echo "Meld is not installed."
     failed_installations+=("Meld")
+fi
+
+echo "Mongodb version:"
+if command -v mongod >/dev/null 2>&1; then
+    mongod --version
+else
+    echo "Mongodb is not installed."
+    failed_installations+=("Mongodb")
+fi
+
+echo "Postman version:"
+if command -v postman >/dev/null 2>&1; then
+else
+    echo "Postman is not installed."
+    failed_installations+=("Postman")
 fi
 
 # ----------------------------------------
