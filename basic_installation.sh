@@ -210,7 +210,7 @@ if command -v postman >/dev/null 2>&1; then
     echo "Postman is already installed. Skipping installation."
 else
     echo "Installing Postman..."
-    if ! snap install -v postman; then
+    if ! snap install -y postman; then
         echo "Failed to install Postman."
         failed_installations+=("Postman")
     fi
@@ -334,6 +334,7 @@ fi
 
 echo "Postman version:"
 if command -v postman >/dev/null 2>&1; then
+    :
 else
     echo "Postman is not installed."
     failed_installations+=("Postman")
