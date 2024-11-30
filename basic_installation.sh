@@ -234,6 +234,22 @@ else
     fi
 fi
 
+# ----------------------------------------
+# Install Meld
+# ----------------------------------------
+echo "Swapping the 8 GB RAM"
+if ! grep -q "/mnt/myswap2.swap" /proc/swaps; then
+    echo "Swap file /mnt/myswap2.swap is not active. Creating swap..."
+    sudo dd if=/dev/zero of=/mnt/myswap2.swap bs=1M count=8192
+    sudo mkswap /mnt/myswap2.swap
+    sudo swapon /mnt/myswap2.swap
+    echo "/mnt/myswap2.swap none swap sw 0 0" | sudo tee -a /etc/fstab
+
+    echo "Swap file /mnt/myswap2.swap has been created and activated."
+else
+    echo "Swap file /mnt/myswap2.swap is already active. Skipping creation."
+fi
+
 sudo apt -y update && sudo apt -y upgrade
 
 # ----------------------------------------
